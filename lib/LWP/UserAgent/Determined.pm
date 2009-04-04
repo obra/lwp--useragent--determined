@@ -1,12 +1,11 @@
 
 package LWP::UserAgent::Determined;
-# Time-stamp: "2004-04-08 23:10:07 ADT"           POD is at the end.
-$VERSION = '1.03';
+
+$VERSION = '1.04';
 use      LWP::UserAgent ();
 @ISA = ('LWP::UserAgent');
 
 use strict;
-use LWP::Debug ();
 die "Where's _elem?!!?" unless __PACKAGE__->can('_elem');
 
 sub timing                { shift->_elem('timing' , @_) }
@@ -18,19 +17,13 @@ sub  after_determined_callback { shift->_elem( 'after_determined_callback' , @_)
 
 sub simple_request {
   my($self, @args) = @_;
-  LWP::Debug::trace('simple_request()');
   my(@timing_tries) = ( $self->timing() =~ m<(\d+(?:\.\d+)*)>g );
   my $determination = $self->codes_to_determinate();
-  LWP::Debug::debug("My retrial code policy is ["
-    . join(' ', sort keys %$determination) . "].");
-  LWP::Debug::debug("My retrial timing policy is [@timing_tries].");
 
   my $resp;
   my $before_c = $self->before_determined_callback;
   my $after_c  = $self->after_determined_callback;
   foreach my $pause_if_unsuccessful (@timing_tries, undef) {
-    LWP::Debug::debug("Trying simple_request with args: ["
-      . join(',', map $_||"''", @args) . "]");
     
     $before_c and $before_c->(
       $self, \@timing_tries, $pause_if_unsuccessful, $determination, \@args);
@@ -42,15 +35,11 @@ sub simple_request {
     my $message = $resp->message;
     $message =~ s/\s+$//s;
     unless( $determination->{$code} ) { # normal case: all is well (or 404, etc)
-      LWP::Debug::debug("It returned a code ($code $message) blocking a retry");
       return $resp;
     }
     if(defined $pause_if_unsuccessful) { # it's undef only on the last
 
-      LWP::Debug::debug("It returned a code ($code $message) that'll make me retry, after $pause_if_unsuccessful seconds.");
       sleep $pause_if_unsuccessful if $pause_if_unsuccessful;
-    } else {
-      LWP::Debug::debug("I give up.  I'm returning this \"$code $message\" response.");
     }
   }
   

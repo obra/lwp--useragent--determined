@@ -1,5 +1,9 @@
 Revision history for Perl extension LWP::Determined::UserAgent
-                                        Time-stamp: "2004-04-08 23:10:29 ADT"
+
+2009-04-04 Jesse Vincent <jesse@cpan.org>
+	* Release 1.04 -- Keeping pace with LWP updates
+	* New Maintainer
+	* Resolves [cpan #42123] and [cpan #41508]
 
 
 2004-04-08  Sean M. Burke  sburke@cpan.org
