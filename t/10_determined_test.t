@@ -2,7 +2,7 @@
 # Time-stamp: "0";
 use strict;
 use Test;
-BEGIN { plan tests => 11 }
+BEGIN { plan tests => 13 }
 
 #use LWP::Debug ('+');
 
@@ -16,6 +16,10 @@ print "# Hello from ", __FILE__, "\n";
 print "# LWP::UserAgent::Determined v$LWP::UserAgent::Determined::VERSION\n";
 print "# LWP::UserAgent v$LWP::UserAgent::VERSION\n";
 print "# LWP v$LWP::VERSION\n" if $LWP::VERSION;
+
+my @error_codes = qw(408 500 502 503 504);
+ok( @error_codes == keys %{$browser->codes_to_determinate} );
+ok( @error_codes == grep { $browser->codes_to_determinate->{$_} } @error_codes );
 
 my $url = 'http://www.livejournal.com/~torgo_x/rss';
 my $before_count = 0;
