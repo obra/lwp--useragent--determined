@@ -1,5 +1,10 @@
 Revision history for Perl extension LWP::Determined::UserAgent
 
+2011-01-03 Jesse Vincent <jesse@cpan.org>
+    * Release 1.05
+    * Fix for RT#55591: Incorrect default value for 'codes_to_determinate'
+	  from yibe via github.
+
 2009-04-04 Jesse Vincent <jesse@cpan.org>
 	* Release 1.04 -- Keeping pace with LWP updates
 	* New Maintainer
