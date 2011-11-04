@@ -11,12 +11,21 @@ my $browser = LWP::UserAgent::Determined->new;
 
 use HTTP::Headers;
 use HTTP::Request;
+use HTTP::Request::Common qw( GET );
 
 sub set_response {
   my ($code) = @_;
-  $browser->set_my_handler(request_send => @_ ? sub {
+  my $handler = sub {
     return HTTP::Response->new($code, undef, HTTP::Headers->new(), 'n/a');
-  } : ());
+  };
+  if( LWP::UserAgent->can('set_my_handler') ){ # 5.815
+    # forward compatible
+    $browser->set_my_handler(request_send => $handler);
+  }
+  else {
+    # backward compatible
+    *LWP::UserAgent::simple_request = $handler;
+  }
 }
 
 sub timings {
@@ -55,7 +64,7 @@ $browser->after_determined_callback( sub {
   ++$after_count;
 });
 
-my $resp = $browser->get( $url );
+my $resp = $browser->request( GET $url );
 ok 1;
 
 print "# That gave: ", $resp->status_line, "\n";
@@ -74,7 +83,7 @@ $before_count = 0;
 
 print "# Trying unknown host/port, $url\n";
 
-$resp = $browser->get( $url );
+$resp = $browser->request( GET $url );
 ok 1;
 
 $browser->timing('1,2,3');
@@ -97,7 +106,7 @@ $before_count = 0;
 
 print "# Trying a nonexistent address, $url\n";
 
-$resp = $browser->get( $url );
+$resp = $browser->request( GET $url );
 ok 1;
 
 $browser->timing('1,2,3');
