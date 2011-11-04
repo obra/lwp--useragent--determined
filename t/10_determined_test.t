@@ -9,6 +9,16 @@ BEGIN { plan tests => 13 }
 use LWP::UserAgent::Determined;
 my $browser = LWP::UserAgent::Determined->new;
 
+use HTTP::Headers;
+use HTTP::Request;
+
+sub set_response {
+  my ($code) = @_;
+  $browser->set_my_handler(request_send => @_ ? sub {
+    return HTTP::Response->new($code, undef, HTTP::Headers->new(), 'n/a');
+  } : ());
+}
+
 sub timings {
   my $self = $browser;
   # copied from module, line 20
@@ -26,6 +36,10 @@ print "# LWP v$LWP::VERSION\n" if $LWP::VERSION;
 my @error_codes = qw(408 500 502 503 504);
 ok( @error_codes == keys %{$browser->codes_to_determinate} );
 ok( @error_codes == grep { $browser->codes_to_determinate->{$_} } @error_codes );
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+set_response(503);
 
 my $url = 'http://www.livejournal.com/~torgo_x/rss';
 my $before_count = 0;
@@ -52,6 +66,8 @@ ok(  $after_count > 1 );
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+set_response(500);
+
 $url = "http://www.aoeaoeaoeaoe.int:9876/sntstn";
 $before_count = 0;
  $after_count = 0;
@@ -72,6 +88,8 @@ ok $after_count,  4;
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+set_response(404);
 
 $url = "http://www.interglacial.com/always404alicious/";
 $before_count = 0;
