@@ -49,7 +49,7 @@ $url = "http://www.aoeaoeaoeaoe.int:9876/sntstn";
 $before_count = 0;
  $after_count = 0;
 
-print "# Trying a nonexistent address, $url\n";
+print "# Trying unknown host/port, $url\n";
 
 $resp = $browser->get( $url );
 ok 1;
