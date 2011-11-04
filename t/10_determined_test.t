@@ -9,6 +9,12 @@ BEGIN { plan tests => 13 }
 use LWP::UserAgent::Determined;
 my $browser = LWP::UserAgent::Determined->new;
 
+sub timings {
+  my $self = $browser;
+  # copied from module, line 20
+  my(@timing_tries) = ( $self->timing() =~ m<(\d+(?:\.\d+)*)>g );
+}
+
 #$browser->agent('Mozilla/4.76 [en] (Win98; U)');
 
 ok 1;
@@ -30,7 +36,8 @@ $browser->before_determined_callback( sub {
   ++$before_count;
 });
 $browser->after_determined_callback( sub {
-  print "#  \\Just tried ", $_[4][0]->uri, " at ", scalar(localtime), ".\n";
+  print "#  \\Just tried ", $_[4][0]->uri, " at ", scalar(localtime),
+    ".  Waiting " . (timings)[$after_count] . "s.\n";
   ++$after_count;
 });
 
