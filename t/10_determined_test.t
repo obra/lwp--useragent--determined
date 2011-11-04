@@ -36,8 +36,8 @@ $browser->before_determined_callback( sub {
   ++$before_count;
 });
 $browser->after_determined_callback( sub {
-  print "#  \\Just tried ", $_[4][0]->uri, " at ", scalar(localtime),
-    ".  Waiting " . (timings)[$after_count] . "s.\n";
+  print "#  \\Just tried ", $_[4][0]->uri, " at ", scalar(localtime), ".  ",
+    ($after_count < scalar(timings) ? "Waiting " . (timings)[$after_count] . "s." : "Giving up."), "\n";
   ++$after_count;
 });
 
