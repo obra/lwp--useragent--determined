@@ -66,7 +66,7 @@ ok $after_count,  4;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-$url = "http://www.interglacial.com/always404alicious/";
+$url = "http://www.google.com/always404alicious/";
 $before_count = 0;
  $after_count = 0;
 
