@@ -215,7 +215,7 @@ L<LWP>, L<LWP::UserAgent>
 
 =head1 COPYRIGHT AND DISCLAIMER
 
-Copyright 2004, Sean M. Burke C<sburke@cpan.org>, all rights
+Copyright 2004, Sean M. Burke, all rights
 reserved.  This program is free software; you can redistribute it
 and/or modify it under the same terms as Perl itself.
 
@@ -226,7 +226,9 @@ merchantability or fitness for a particular purpose.
 
 =head1 AUTHOR
 
-Sean M. Burke, C<sburke@cpan.org>
+Originally created by Sean M. Burke, C<sburke@cpan.org>
+
+Currently maintained by Jesse Vincent C<jesse@fsck.com>
 
 =cut
 
