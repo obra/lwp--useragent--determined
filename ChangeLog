@@ -1,5 +1,9 @@
 Revision history for Perl extension LWP::Determined::UserAgent
 
+2012.05-20 Jesse Vincent <jesse@cpan.org>
+	* Release 1.06
+	* Mock http responses to avoid unnecessary network requests -- Randy Stauner
+
 2011-01-03 Jesse Vincent <jesse@cpan.org>
     * Release 1.05
     * Fix for RT#55591: Incorrect default value for 'codes_to_determinate'
