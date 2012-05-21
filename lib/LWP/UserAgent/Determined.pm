@@ -32,8 +32,6 @@ sub simple_request {
       $self, \@timing_tries, $pause_if_unsuccessful, $determination, \@args, $resp);
 
     my $code = $resp->code;
-    my $message = $resp->message;
-    $message =~ s/\s+$//s;
     unless( $determination->{$code} ) { # normal case: all is well (or 404, etc)
       return $resp;
     }

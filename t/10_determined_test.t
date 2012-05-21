@@ -100,7 +100,7 @@ ok $after_count,  4;
 
 set_response(404);
 
-$url = "http://www.interglacial.com/always404alicious/";
+$url = "http://www.google.com/should-always-return-a-404";
 $before_count = 0;
  $after_count = 0;
 
