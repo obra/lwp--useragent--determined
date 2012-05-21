@@ -9,6 +9,31 @@ BEGIN { plan tests => 13 }
 use LWP::UserAgent::Determined;
 my $browser = LWP::UserAgent::Determined->new;
 
+use HTTP::Headers;
+use HTTP::Request;
+use HTTP::Request::Common qw( GET );
+
+sub set_response {
+  my ($code) = @_;
+  my $handler = sub {
+    return HTTP::Response->new($code, undef, HTTP::Headers->new(), 'n/a');
+  };
+  if( LWP::UserAgent->can('set_my_handler') ){ # 5.815
+    # forward compatible
+    $browser->set_my_handler(request_send => $handler);
+  }
+  else {
+    # backward compatible
+    *LWP::UserAgent::simple_request = $handler;
+  }
+}
+
+sub timings {
+  my $self = $browser;
+  # copied from module, line 20
+  my(@timing_tries) = ( $self->timing() =~ m<(\d+(?:\.\d+)*)>g );
+}
+
 #$browser->agent('Mozilla/4.76 [en] (Win98; U)');
 
 ok 1;
@@ -21,6 +46,10 @@ my @error_codes = qw(408 500 502 503 504);
 ok( @error_codes == keys %{$browser->codes_to_determinate} );
 ok( @error_codes == grep { $browser->codes_to_determinate->{$_} } @error_codes );
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+set_response(503);
+
 my $url = 'http://www.livejournal.com/~torgo_x/rss';
 my $before_count = 0;
 my  $after_count = 0;
@@ -30,11 +59,12 @@ $browser->before_determined_callback( sub {
   ++$before_count;
 });
 $browser->after_determined_callback( sub {
-  print "#  \\Just tried ", $_[4][0]->uri, " at ", scalar(localtime), ".\n";
+  print "#  \\Just tried ", $_[4][0]->uri, " at ", scalar(localtime), ".  ",
+    ($after_count < scalar(timings) ? "Waiting " . (timings)[$after_count] . "s." : "Giving up."), "\n";
   ++$after_count;
 });
 
-my $resp = $browser->get( $url );
+my $resp = $browser->request( GET $url );
 ok 1;
 
 print "# That gave: ", $resp->status_line, "\n";
@@ -45,13 +75,15 @@ ok(  $after_count > 1 );
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+set_response(500);
+
 $url = "http://www.aoeaoeaoeaoe.int:9876/sntstn";
 $before_count = 0;
  $after_count = 0;
 
-print "# Trying a nonexistent address, $url\n";
+print "# Trying unknown host/port, $url\n";
 
-$resp = $browser->get( $url );
+$resp = $browser->request( GET $url );
 ok 1;
 
 $browser->timing('1,2,3');
@@ -66,13 +98,15 @@ ok $after_count,  4;
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+set_response(404);
+
 $url = "http://www.interglacial.com/always404alicious/";
 $before_count = 0;
  $after_count = 0;
 
 print "# Trying a nonexistent address, $url\n";
 
-$resp = $browser->get( $url );
+$resp = $browser->request( GET $url );
 ok 1;
 
 $browser->timing('1,2,3');
