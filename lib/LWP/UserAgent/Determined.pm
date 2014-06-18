@@ -27,6 +27,10 @@ sub simple_request {
     
     $before_c and $before_c->(
       $self, \@timing_tries, $pause_if_unsuccessful, $determination, \@args);
+
+    # prevent duplicate cookies.
+    $args[0]->remove_header('cookie');
+
     $resp = $self->SUPER::simple_request(@args);
     $after_c and $after_c->(
       $self, \@timing_tries, $pause_if_unsuccessful, $determination, \@args, $resp);
